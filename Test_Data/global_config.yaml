@@ -1,0 +1,12 @@
+log:
+  log_level: 4
+memory_limit: 300
+# return the yaml result to server
+alm_ftp:
+  server: '15.83.248.197'
+  username: 'Administrator'
+  password: 'Shanghai2020'
+  local_ftp_path: 'c:\ftp\scripts_report'  # alm server ftp local path
+  report_path: 'scripts_report'  # alm ftp report path
+http_dependency:
+  url_data_action: 'http://15.83.248.236:8000/execute/data_action'

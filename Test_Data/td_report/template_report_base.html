@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="description" content="HP Thin Client QA Automation Test Report Template"/>
+        <meta NAME="author" content="HP Thin Client QA Automation Team">
+        <title>Thin Client QA Test Automation Report</title>
+        <link rel="stylesheet" type="text/css" href="static/css/report_style_base.css">
+        {% block static %}
+        {% endblock %}
+    </head>
+    
+    <body >
+        <div class="header">
+            <div style="float: left; width: 10%">
+                <img src="./static/image/hp-logo.png" height="100px" width="200px" alt='HPI Thin Client QA'/>
+            </div>
+            <div style="float: right; width: 80%">
+                <p>Thin Client QA Test Automation Report</p>
+            </div>
+        </div>
+
+        <div id="container" style="float:right;height: 200%;width:40%"></div>
+        <script type="text/javascript">
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var app = {};
+            var pie_data = {{ data|tojson }}.sort(function (a, b) { return a.value - b.value; });
+            option = null;
+            option = {
+                title: {
+                    text: 'Summary',
+                    left: 'center',
+                    top: 0,
+                    textStyle: {
+                        color: 'black'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                series : [
+                    {
+                        name: 'Test Case',
+                        type: 'pie',
+                        radius: '70%',
+                        center: ['50%', '50%'],
+                        data: pie_data,
+                        label: {
+                            normal: {
+                                textStyle: {
+                                    color: 'rgba(0, 0, 0, 1)'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                lineStyle: {
+                                    color: 'rgba(0, 0, 0, 1)'
+                                },
+                                smooth: 0.2,
+                                length: 10,
+                                length2: 20
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                shadowBlur: 20,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return Math.random() * 200;
+                        }
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+            myChart.on('click', function (params) {
+                if(params.name=='Pass'){
+                    showCase(2)}
+                else if(params.name=='Fail'){
+                showCase(1)}
+            });
+        </script>
+        <script language="javascript" type="text/javascript">
+            output_list = Array();
+
+            /*level --Findyou
+            0: Show Summary //all hiddenRow
+            1: Show Failed  //pt hiddenRow, ft none
+            2: Show Pass    //pt none, ft hiddenRow
+            3: Show Detail     //pt none, ft none
+            */
+
+            function changeStyle(ctid){
+                if(document.getElementById(ctid).className=='hiddenRow'){
+                    document.getElementById(ctid).className='none';
+                }
+                else{
+                    document.getElementById(ctid).className='hiddenRow';
+                }
+            }
+
+            function showCase(level) {
+                trs = document.getElementsByTagName("tr");
+                for (var i = 0; i < trs.length; i++) {
+                    tr = trs[i];
+                    id = tr.id;
+                    if (id.substr(0,2) == 'ft') {
+                        if (level == 2 || level == 0 ) {
+                            tr.className = 'hiddenRow';
+                        }
+                        else {
+                            tr.className = '';
+                        }
+                    }
+                    if (id.substr(0,2) == 'pt') {
+                        if (level < 2) {
+                            tr.className = 'hiddenRow';
+                        }
+                        else {
+                            tr.className = '';
+                        }
+                    }
+                }
+
+                //加入【详细】切换文字变化 --Findyou
+                detail_class=document.getElementsByClassName('detail');
+                //console.log(detail_class.length)
+                if (level == 3) {
+                    for (var i = 0; i < detail_class.length; i++){
+                        detail_class[i].innerHTML="outline"
+                    }
+                }
+                else{
+                    for (var i = 0; i < detail_class.length; i++){
+                        detail_class[i].innerHTML="detail"
+                    }
+                }
+            }
+
+            function html_escape(s) {
+                s = s.replace(/&/g,'&amp;');
+                s = s.replace(/</g,'&lt;');
+                s = s.replace(/>/g,'&gt;');
+                return s;
+            }
+        </script>
+        <script type="text/javascript">
+            var tag = "False"
+            function table_hidden(){
+                var table = document.getElementById("result_table");
+                var table2 = document.getElementById("result_table_2");
+                var button = document.getElementById("hidden_button");
+                if (tag == "False"){
+                    table2.removeAttribute("hidden");
+                    table.setAttribute("hidden",true);
+                    tag = "True"
+                    button.innerHTML="Group by Unit"
+                }
+                else{
+                    table2.setAttribute("hidden",true);
+                    table.removeAttribute("hidden");
+                    tag="False"
+                    button.innerHTML="Group by Case"
+                }
+            }
+        </script>             
+        <div class="project_name">
+            <P>Project Name: {{ task_name }}</P>
+        </div>              
+        <div class="project_info">
+            <p>Framework Version:&nbsp;&nbsp;&nbsp;&nbsp;{{ framework_version }}</p>
+            <p>Script Version:&nbsp;&nbsp;&nbsp;&nbsp;{{ script_version }}</p>
+            <p>From:&nbsp;&nbsp;&nbsp;&nbsp;{{ start }}</p>
+            <p>To:&nbsp;&nbsp;&nbsp;&nbsp;{{ end }}</p>
+            <p>
+                Summary:&nbsp;&nbsp;&nbsp;&nbsp;
+                <span id='total_case'>Planned Case:&nbsp;&nbsp;{{ total['Count'] }}&nbsp;&nbsp;</span>
+                <span id='pass_case'>Passed Case:&nbsp;&nbsp;{{ total['Pass'] }}&nbsp;&nbsp;</span>
+                <span id='fail_case'>Failed Case:&nbsp;&nbsp;{{ total['Fail'] }}&nbsp;&nbsp;</span>
+                <span id='pass_rate'>Pass Rate:&nbsp;&nbsp;{{ total['Passing rate'] }}%&nbsp;&nbsp;</span>
+            </p>
+        </div>
+        <!-- Button Field -->
+        <div>
+            <a class="btn btn-summary" href='javascript:showCase(0)'>Show Summary</a>
+            <a class="btn btn-fail" href='javascript:showCase(1)'>Show Fail</a>
+            <a class="btn btn-pass" href='javascript:showCase(2)'>Show Pass</a>
+            <a class="btn btn-detail" href='javascript:showCase(3)'>Show Detail</a>      
+            <a class="btn btn-group" id="hidden_button" href='javascript:table_hidden()'>Group by Case</a>
+        </div>
+        <!-- Test Result Detail Table -->
+        <div>
+            {% block table1 %}
+            {% endblock %}
+            {% block table2 %}
+            {% endblock %}
+        </div>
+        <div class="footer">
+            <p>&copy;  Copyright 2019 HP ThinClient QA, Automation</p>
+        </div>
+    </body>
+</html>

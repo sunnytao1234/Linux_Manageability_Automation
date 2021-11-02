@@ -1,0 +1,105 @@
+@font-face {
+    margin: auto;
+    font-family: 'HP Simplified Light';
+    font-style: normal;
+    src: url('../fonts/HPSimplified_Lt.ttf')
+}
+.project_name {
+    font-family: 'HP Simplified Light';
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: black;
+}
+.project_info {
+    font-family: 'HP Simplified Light';
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: black;
+}
+.project_detail {
+    font-family: 'HP Simplified Light';
+    font-weight: normal;
+    font-size: 12px;
+    color: black;
+}
+.project_error_summary{
+    font-family: 'HP Simplified Light';
+    font-size: 14px;
+    font-weight: bold;
+    color: red
+}
+.project_error_detail{
+    font-family: 'HP Simplified Light';
+    font-size: 12px;
+    font-weight: normal;
+    color: red   
+}
+.header{
+    display: block;
+    margin-bottom: 100px;
+    height: 100px;
+    line-height: 50px;
+    font-family: 'HP Simplified Light';
+    font-size: 36px;
+    font-weight: bold;
+    color: black       
+}
+.footer{
+    height: 100px;
+    line-height: 100px;
+    margin-top: 50px;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'HP Simplified Light';
+    font-size: 14px;
+    font-weight: normal;
+    color: black;
+    letter-spacing: 1px
+}
+.btn{
+    height: 30px;
+    width: 100px;
+    line-height: 30px;
+    font-family: 'HP Simplified Light';
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none
+}
+.btn-summary{
+    background-color: rgb(0, 150, 214)
+}
+.btn-fail{
+    background-color: red
+}
+.btn-pass{
+    background-color: rgb(0, 176, 80)
+}
+.btn-detail{
+    background-color: rgb(107, 58, 151)
+}
+.btn-group{
+    background-color:  rgb(233, 130, 51)
+}
+#total_case {color: rgb(0, 150, 214)}
+#pass_case {color: rgb(0, 176, 80)}
+#fail_case {color: red}
+#pass_rate {color: rgb(107, 58, 151)}
+
+/* -- report ------------------------------------------------------------------------ */
+table { font-size: 100%; font-family: 'HP Simplified Light'}
+table tr td {font-family: 'HP Simplified Light'}
+table tr th {font-family: 'HP Simplified Light'}
+#total_row  { font-weight: bold; font-family: 'HP Simplified Light'}
+.passCase   { color: rgb(0, 176, 80); font-weight: bold; font-family: 'HP Simplified Light'}
+.failCase   { color: red; font-weight: bold; font-family: 'HP Simplified Light'}
+.errorCase  { color: rgb(233, 130, 51); font-weight: bold; font-family: 'HP Simplified Light'}
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; font-size:14px; font-family: 'HP Simplified Light'}
+.teststep   { margin-left: 4em; font-size:12px; font-family: 'HP Simplified Light'}

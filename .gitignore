@@ -1,0 +1,7 @@
+/.idea
+/Test_Data/additional.yml
+/Test_Data/script.yml
+/*.txt
+/Test_Report
+/auto_start_setup.sh
+/test.py

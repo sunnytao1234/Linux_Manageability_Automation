@@ -1,0 +1,2 @@
+from Test_Suite import verify_image_deploying_from_auto_update_server_in_thinpro_mode
+from Test_Suite import verify_image_deploying_from_FTP_server_in_ThinPro_mode

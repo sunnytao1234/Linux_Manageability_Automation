@@ -1,0 +1,188 @@
+{% extends 'template_report_base.html' %}
+{% block static %}
+<script src="static/js/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/echarts.min.js"></script>
+{% endblock %}
+{% block table1 %}
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+    <caption></caption>
+    <colgroup>
+        <col span="1" align='left' width="5%"/>
+        <col span="1" align='left' width="15%"/>
+        <col span="1" align='left' width="10%"/>
+        <col span="1" align='left' width="30%"/>
+        <col span="1" align='left' width="30%"/>
+        <col span="1" align='left' width="10%"/>
+    </colgroup>
+    <tr id='header_row' class="text-center" style="background-color:#d9edf7;font-weight: bold;font-size: 14px;">
+        <td>#</td>
+        <td>Test Unit</td>
+        <td>Status</td>
+        <td>Expect</td>
+        <td>Actual</td>
+        <td>Note</td>
+    </tr>
+    {% for t in final_data %}
+    <tr class='failClass warning' style="font-size: 16px;">
+        <td>{{final_data.index(t)+1}}</td>
+        <td style="font-size:15px">{{t[0]}}</td>
+        <td class="text-center">Pass:{{t[2]}}</td>
+        <td class="text-center">Fail:{{t[3]}}</td>
+        <td class="text-center">NoRun:{{t[4]}}</td>
+        <td class="text-center">Count:{{t[5]}}</td>
+    </tr>
+        {% for c in t[1] %}
+            {%if c['result'].upper()=='FAIL'%}
+            <tr id='ft{{final_data.index(t)+1}}_{{t[1].index(c)+1}}' class='hiddenRow' style="background-color:#f2dede">
+                <td>{{final_data.index(t)+1}}.{{t[1].index(c)+1}}</td>
+                <td class='failCase'><div class='testcase'>{{c['case_name']}}</div></td>
+                <td align='center'>
+                <button id='btn_ft{{final_data.index(t)+1}}_{{t[1].index(c)+1}}' type="button"  class="btn btn-fail" onclick="changeStyle('table1_{{final_data.index(t)+1}}{{t[1].index(c)+1}}')">{{c['result']}}</button>
+                </td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+            </tr>
+            {%elif c['result'].upper()=='PASS'%}
+            <tr id='pt{{final_data.index(t)+1}}_{{l}}' class='hiddenRow' style="height:32.8px;background-color:#dff0d8">
+                <td>{{final_data.index(t)+1}}.{{t[1].index(c)+1}}</td>
+                <td class='passCase'><div class='testcase'>{{c['case_name']}}</div></td>
+                <td align='center'><span class="btn btn-pass" >{{c['result']}}</span></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+            </tr>
+            {%endif%}
+            {%if c['result'].upper()=='FAIL'%}
+            <tbody id="table1_{{final_data.index(t)+1}}{{t[1].index(c)+1}}"  class="hiddenRow" align="left">
+                {% for s in range(c['steps']|length)%}
+                    {%if c['steps'][s]['result'].upper()=='FAIL'%}
+                    <tr id='ft' class='none' style="font-size:12px;background-color:#f2dede">
+                        <td>{{final_data.index(t)+1}}.{{t[1].index(c)+1}}.{{s+1}}</td>
+                        <td class='failCase'><div class="teststep">{{c['steps'][s]['step_name']}}</div></td>
+                        <td align='right'>
+                            <span class="label label-danger danger">{{c['steps'][s]['result']}}</span>
+                        </td>
+                        <td class="text-center">{% if c['steps'][s]['expect'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{t[0]}}/test_report/expect_{{c['steps'][s]['expect']}}">{{c['steps'][s]['expect'][4:]}}</a>{% else %}{{c['steps'][s]['expect']}}{% endif %}</td>
+                        <td class="text-center">{% if c['steps'][s]['actual'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{t[0]}}/test_report/actual_{{c['steps'][s]['actual']}}">{{c['steps'][s]['actual'][4:]}}</a>{% else %}{{c['steps'][s]['actual']}}{% endif %}</td>
+                        <td class="text-center">{{c['steps'][s]['note']}}</td>
+                    </tr>
+                    {%elif c['steps'][s]['result'].upper()=='PASS'%}
+                    <tr id='ft2' class='none' style="font-size:12px;background-color:#dff0d8">
+                        <td>{{final_data.index(t)+1}}.{{t[1].index(c)+1}}.{{s+1}}</td>
+                        <td class='passCase'><div class='teststep'>{{c['steps'][s]['step_name']}}</div></td>
+                        <td align='right'>
+                            <span class="label label-success success" >{{c['steps'][s]['result']}}</span>
+                        </td>
+                        <td class="text-center">{% if c['steps'][s]['expect'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{t[0]}}/test_report/expect_{{c['steps'][s]['expect']}}">{{c['steps'][s]['expect'][4:]}}</a>{% else %}{{c['steps'][s]['expect']}}{% endif %}</td>
+                        <td class="text-center">{% if c['steps'][s]['actual'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{t[0]}}/test_report/actual_{{c['steps'][s]['actual']}}">{{c['steps'][s]['actual'][4:]}}</a>{% else %}{{c['steps'][s]['actual']}}{% endif %}</td>
+                        <td class="text-center">{{c['steps'][s]['note']}}</td>
+                    </tr>
+                    {%endif%}
+                {%endfor%}
+            </tbody>
+            {%endif%}
+        {%endfor%}
+    {% endfor %}
+    <tr id='total_row' class="text-center active" style="font-weight: bold;font-size: 15px;">
+        <td>Total</td>
+        <td>Passing rate: {{total['Passing rate']}}%</td>
+        <td>Pass:{{total['Pass']}}</td>
+        <td>Fail:{{total['Fail']}}</td>
+        <td>NoRun:{{total['NoRun']}}</td>
+        <td>Count:{{total['Count']}}</td>
+    </tr>
+</table>
+{% endblock %}
+
+{% block table2 %}
+<table id='result_table_2' class="table table-condensed table-bordered table-hover" hidden="hidden">
+    <caption></caption>
+    <colgroup>
+        <col span="1" align='left' width="5%"/>
+        <col span="1" align='left' width="15%"/>
+        <col span="1" align='left' width="10%"/>
+        <col span="1" align='left' width="30%"/>
+        <col span="1" align='left' width="30%"/>
+        <col span="1" align='left' width="10%"/>
+    </colgroup>
+    <tr id='header_row' class="text-center" style="background-color:#d9edf7;font-weight: bold;font-size: 14px;">
+        <td>#</td>
+        <td>Test Case</td>
+        <td>Status</td>
+        <td>Expect</td>
+        <td>Actual</td>
+        <td>Note</td>
+    </tr>
+    {% for t in final_data_2 %}
+    <tr class='failClass warning' style="font-size: 16px;">
+        <td>{{final_data_2.index(t)+1}}</td>
+        <td style="font-size:15px">{{t[0]}}</td>
+        <td class="text-center">Pass:{{t[2]}}</td>
+        <td class="text-center">Fail:{{t[3]}}</td>
+        <td class="text-center">NoRun:{{t[4]}}</td>
+        <td class="text-center">Count:{{t[5]}}</td>
+    </tr>
+        {% for c in t[1] %}
+            {%if c['result'].upper()=='FAIL'%}
+            <tr id='ft{{final_data_2.index(t)+1}}_{{t[1].index(c)+1}}' class='hiddenRow' style="background-color:#f2dede">
+                <td>{{final_data_2.index(t)+1}}.{{t[1].index(c)+1}}</td>
+                <td class='failCase'><div class='testcase'>{{c['uut_name']}}</div></td>
+                <td align='center'>
+                <button id='btn_ft{{final_data_2.index(t)+1}}_{{t[1].index(c)+1}}' type="button"  class="btn btn-fail" onclick="changeStyle('table2_{{final_data_2.index(t)+1}}{{t[1].index(c)+1}}')">{{c['result']}}</button>
+                </td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+            </tr>
+            {%elif c['result'].upper()=='PASS'%}
+            <tr id='pt{{final_data_2.index(t)+1}}_{{l}}' class='hiddenRow' style="height:32.8px;background-color:#dff0d8">
+                <td>{{final_data_2.index(t)+1}}.{{t[1].index(c)+1}}</td>
+                <td class='passCase'><div class='testcase'>{{c['uut_name']}}</div></td>
+                <td align='center'><span class="btn btn-pass" >{{c['result']}}</span></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+                <td class="text-center"></td>
+            </tr>
+            {%endif%}
+            {%if c['result'].upper()=='FAIL'%}
+            <tbody id="table2_{{final_data_2.index(t)+1}}{{t[1].index(c)+1}}"  class="hiddenRow" align="left">
+                {% for s in range(c['steps']|length)%}
+                    {%if c['steps'][s]['result'].upper()=='FAIL'%}
+                    <tr id='ft' class='none' style="font-size:12px;background-color:#f2dede">
+                        <td>{{final_data_2.index(t)+1}}.{{t[1].index(c)+1}}.{{s+1}}</td>
+                        <td class='failCase'><div class="teststep">{{c['steps'][s]['step_name']}}</div></td>
+                        <td align='right'>
+                            <span class="label label-danger danger">{{c['steps'][s]['result']}}</span>
+                        </td>
+                        <td class="text-center">{% if c['steps'][s]['expect'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{c['uut_name']}}/test_report/expect_{{c['steps'][s]['expect']}}">{{c['steps'][s]['expect'][4:]}}</a>{% else %}{{c['steps'][s]['expect']}}{% endif %}</td>
+                        <td class="text-center">{% if c['steps'][s]['actual'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{c['uut_name']}}/test_report/actual_{{c['steps'][s]['actual']}}">{{c['steps'][s]['actual'][4:]}}</a>{% else %}{{c['steps'][s]['actual']}}{% endif %}</td>
+                        <td class="text-center">{{c['steps'][s]['note']}}</td>
+                    </tr>
+                    {%elif c['steps'][s]['result'].upper()=='PASS'%}
+                    <tr id='ft2' class='none' style="font-size:12px;background-color:#dff0d8">
+                        <td>{{final_data_2.index(t)+1}}.{{t[1].index(c)+1}}.{{s+1}}</td>
+                        <td class='passCase'><div class='teststep'>{{c['steps'][s]['step_name']}}</div></td>
+                        <td align='right'>
+                            <span class="label label-success success" >{{c['steps'][s]['result']}}</span>
+                        </td>
+                        <td class="text-center">{% if c['steps'][s]['expect'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{c['uut_name']}}/test_report/expect_{{c['steps'][s]['expect']}}">{{c['steps'][s]['expect'][4:]}}</a>{% else %}{{c['steps'][s]['expect']}}{% endif %}</td>
+                        <td class="text-center">{% if c['steps'][s]['actual'][:3]=='img' %}<a style="display:block;" target="_blank" href="{{c['uut_name']}}/test_report/actual_{{c['steps'][s]['actual']}}">{{c['steps'][s]['actual'][4:]}}</a>{% else %}{{c['steps'][s]['actual']}}{% endif %}</td>
+                        <td class="text-center">{{c['steps'][s]['note']}}</td>
+                    </tr>
+                    {%endif%}
+                {%endfor%}
+            </tbody>
+            {%endif%}
+        {%endfor%}
+    {% endfor %}
+    <tr id='total_row' class="text-center active" style="font-weight: bold;font-size: 15px;">
+        <td>Total</td>
+        <td>Passing rate: {{total['Passing rate']}}%</td>
+        <td>Pass:{{total['Pass']}}</td>
+        <td>Fail:{{total['Fail']}}</td>
+        <td>NoRun:{{total['NoRun']}}</td>
+        <td>Count:{{total['Count']}}</td>
+    </tr>
+</table>
+{% endblock %}

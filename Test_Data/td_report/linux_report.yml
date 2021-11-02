@@ -1,0 +1,6 @@
+ platform: True
+ config: False
+ uut_mac: False
+ test_set_id: True
+ testsetpath: False
+ Timestamp: True

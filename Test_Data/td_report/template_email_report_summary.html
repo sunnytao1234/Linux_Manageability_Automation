@@ -1,0 +1,91 @@
+<!-- link to external css file -->
+<head>
+  <title>Email Report Template</title>
+  <style>
+    @font-face {
+    margin: auto;
+    font-family: 'HP Simplified Light';
+    font-style: normal;
+    src: url('/configuration/fonts/HPSimplified_Lt.ttf')
+  }
+  .project_name {
+      font-family: 'HP Simplified Light';
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 14pt;
+      color: black;
+  }
+  .project_info {
+      font-family: 'HP Simplified Light';
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 12pt;
+      color: black;
+  }
+  .project_detail {
+      font-family: 'HP Simplified Light';
+      font-weight: normal;
+      font-size: 10pt;
+      color: black;
+  }
+  .project_error_summary{
+      font-family: 'HP Simplified Light';
+      font-size: 12pt;
+      font-weight: bold;
+      color: red
+  }
+  .project_error_detail{
+      font-family: 'HP Simplified Light';
+      font-size: 10pt;
+      font-weight: normal;
+      color: red
+  }
+  table.project_detail { border:2px solid white; width: 400px; min-height: 25px; line-height: 25px; text-align: center; border-collapse: collapse; padding:2px;}
+  table.project_detail tr th { border:2px solid white; background-color: #0096d6; color: white}
+  table.project_detail tr td { border:2px solid white; background-color: #f2f2f2; color: black}
+  </style>
+</head>
+
+<div class="project_name">
+  <p>Project Name: {{ vars['project_name']}}</p>
+</div>
+
+<div class="project_info">
+  Framework Version:&nbsp;&nbsp;&nbsp;&nbsp;{{ vars['framework_version'] }}<br/><br/>
+  Script Version:&nbsp;&nbsp;&nbsp;&nbsp;{{ vars['script_version'] }}<br/><br/>
+  From:&nbsp;&nbsp;&nbsp;&nbsp;{{ vars['start'] }}<br/><br/>
+  To:&nbsp;&nbsp;&nbsp;&nbsp;{{ vars['end'] }}<br/><br/>
+  Summary:
+</div>
+
+<!-- Show Executation Result for status 'Normal' -->
+{% if vars['status'] == 'Normal' %}
+<table class="project_detail">
+  <caption></caption>
+    <tr>
+      <th scope="col">Planned Case</th>
+      <th scope='col'>Passed Case</th>
+      <th scope='col'>Failed Case</th>
+      <th scope='col'>Pass Rate</th>
+    </tr>
+    <tr>
+      <td>{{ vars['planned'] }}</td>
+      <td>{{ vars['passed'] }}</td>
+      <td>{{ vars['failed'] }}</td>
+      <td>{{ vars['pass_rate'] }}</td>
+    </tr>
+</table>
+
+<div class="project_info">
+  <br/><br/>
+  Refer to attachment for more execution details.
+</div>
+<!-- Show Error Details for status 'Error' -->
+{% elif vars['status'] == 'Error' %}
+  <div class="project_error_summary">
+    Automation Framework execution error, please refer to below information for more details. <br/><br/><br/>
+    <div class="project_error_detail">
+      {{ vars['err_details'] }}
+    </div>
+  </div>
+{% endif %}
